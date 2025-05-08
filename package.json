@@ -1,0 +1,22 @@
+{
+  "name": "",
+  "type": "module",
+  "version": "0.0.1",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "@astrojs/svelte": "^7.0.13",
+    "animejs": "^4.0.2",
+    "astro": "^5.7.12",
+    "svelte": "^5.28.2",
+    "three": "^0.176.0",
+    "typescript": "^5.8.3"
+  },
+  "devDependencies": {
+    "@types/three": "^0.176.0"
+  }
+}
