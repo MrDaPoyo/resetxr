@@ -8,7 +8,17 @@
     let resizeListener;
 
     let scene, camera, renderer, grid, gridCellSize, clock;
-    let composer, bloomPass; // For post-processing
+    let composer, bloomPass;
+
+    const initialCamPos = new THREE.Vector3(0, 4, 2); // Higher up, looking down
+    const finalCamPos = new THREE.Vector3(0, 1.5, 3);   // Original position
+    const initialLookAtTarget = new THREE.Vector3(0, 10, 0); // Look at grid origin initially
+    const finalLookAtTarget = new THREE.Vector3(0, 0, -10); // Original lookAt target
+    const currentLookAtTarget = new THREE.Vector3(); // To reuse in animation loop
+
+    function easeInOutQuad(t) {
+        return t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+    }
 
     function animate() {
         if (!renderer || !scene || !camera || !composer) return; 
@@ -19,14 +29,24 @@
             const delta = clock.getDelta();
             const elapsed = clock.getElapsedTime();
             
-            // Fun speed ramping effect on load
-            const rampDuration = 3.0;
+            // Grid speed ramping effect
+            const gridRampDuration = 3.0;
+            const gridT = Math.min(elapsed / gridRampDuration, 1.0);
             const initialSpeed = 5.0;
             const finalSpeed = 0.5;
-            const t = Math.min(elapsed / rampDuration, 1.0);
-            const speed = initialSpeed + (finalSpeed - initialSpeed) * t;
+            const speed = initialSpeed + (finalSpeed - initialSpeed) * gridT;
 
             grid.position.z = (grid.position.z + speed * delta) % gridCellSize;
+
+            const cameraRampDuration = 4.0;
+            let cameraT = Math.min(elapsed / cameraRampDuration, 1.0);
+            
+            const easedT = easeInOutQuad(cameraT);
+
+            camera.position.lerpVectors(initialCamPos, finalCamPos, easedT);
+
+            currentLookAtTarget.lerpVectors(initialLookAtTarget, finalLookAtTarget, easedT);
+            camera.lookAt(currentLookAtTarget);
         }
         
         composer.render();
@@ -42,10 +62,9 @@
             scene.background = new THREE.Color(0x1a001a); // Dark purple/indigo
             scene.fog = new THREE.Fog(scene.background, 25, 50);
 
-
             camera = new THREE.PerspectiveCamera(75, container.clientWidth / container.clientHeight, 0.1, 1000);
-            camera.position.set(0, 1.5, 3); 
-            camera.lookAt(0, 0, -10);    
+            camera.position.copy(initialCamPos); 
+            camera.lookAt(initialLookAtTarget);    
 
             renderer = new THREE.WebGLRenderer({ antialias: true });
             renderer.setSize(container.clientWidth, container.clientHeight);
@@ -57,9 +76,9 @@
 
             bloomPass = new UnrealBloomPass(
                 new THREE.Vector2(container.clientWidth, container.clientHeight),
-                1.2, // Strength: Intensity of the bloom.
-                0.6, // Radius: Spread of the bloom.
-                0.1  // Threshold: How bright a pixel needs to be to bloom. Lower values mean more bloom.
+                1.2, // Strength
+                0.6, // Radius
+                0.1  // Threshold
             );
             composer.addPass(bloomPass);
 
@@ -73,7 +92,7 @@
             
             scene.add(grid);
 
-            animate(); // Start the animation loop
+            animate();
 
             resizeListener = () => {
                 if (camera && renderer && container && composer) {
@@ -84,7 +103,7 @@
                     camera.updateProjectionMatrix();
 
                     renderer.setSize(width, height);
-                    composer.setSize(width, height); // Resize the composer
+                    composer.setSize(width, height);
                 }
             };
             window.addEventListener('resize', resizeListener);
@@ -101,11 +120,15 @@
                  renderer.domElement.parentNode.removeChild(renderer.domElement);
             }
         }
-        if (grid) {
-            if (grid.geometry) grid.geometry.dispose();
-            if (grid.material) grid.material.dispose();
+        if (grid && grid.geometry && grid.material) {
+            grid.geometry.dispose();
+            if (grid.material.dispose) grid.material.dispose();
+            else if (Array.isArray(grid.material)) {
+                grid.material.forEach(material => material.dispose());
+            }
         }
     });
 </script>
 
 <div id="three-container" style="width: 100%; height: 100vh;"></div>
+
