@@ -17,7 +17,14 @@
 
         if (grid && clock) {
             const delta = clock.getDelta();
-            const speed = 1.0; // Adjust for desired speed of grid lines
+            const elapsed = clock.getElapsedTime();
+            
+            // Fun speed ramping effect on load
+            const rampDuration = 3.0;
+            const initialSpeed = 5.0;
+            const finalSpeed = 0.5;
+            const t = Math.min(elapsed / rampDuration, 1.0);
+            const speed = initialSpeed + (finalSpeed - initialSpeed) * t;
 
             grid.position.z = (grid.position.z + speed * delta) % gridCellSize;
         }
