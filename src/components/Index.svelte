@@ -82,8 +82,8 @@
             );
             composer.addPass(bloomPass);
 
-            const gridSize = 100; 
-            const gridDivisions = 100; 
+            const gridSize = 30; 
+            const gridDivisions = 30; 
             gridCellSize = gridSize / gridDivisions; 
 
             const centerLineColor = 0xff00ff; // Magenta
