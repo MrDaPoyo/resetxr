@@ -12,7 +12,7 @@
 
     const initialCamPos = new THREE.Vector3(0, 4, 2); // Higher up, looking down
     const finalCamPos = new THREE.Vector3(0, 1.5, 3);   // Original position
-    const initialLookAtTarget = new THREE.Vector3(0, 10, 0); // Look at grid origin initially
+    const initialLookAtTarget = new THREE.Vector3(0, 7, 0); // Look at grid origin initially
     const finalLookAtTarget = new THREE.Vector3(0, 0, -10); // Original lookAt target
     const currentLookAtTarget = new THREE.Vector3(); // To reuse in animation loop
 
@@ -57,10 +57,22 @@
 
         if (container) {
             clock = new THREE.Clock();
-
+            
             scene = new THREE.Scene();
             scene.background = new THREE.Color(0x1a001a); // Dark purple/indigo
             scene.fog = new THREE.Fog(scene.background, 25, 50);
+            
+            let light = new THREE.AmbientLight(0xffffff, 1);
+
+            // Create a spherical sun instead of flat circle
+            let sun = new THREE.SphereGeometry(6, 32, 32);
+            let sunMaterial = new THREE.MeshBasicMaterial({ 
+                color: 0xae0eae, // Purple
+                emissive: 0xFFCC00, // Bright yellow
+                emissiveIntensity: 1
+            });
+            let sunMesh = new THREE.Mesh(sun, sunMaterial);
+            sunMesh.position.set(0, 0, -25); // Position it behind the grid
 
             camera = new THREE.PerspectiveCamera(75, container.clientWidth / container.clientHeight, 0.1, 1000);
             camera.position.copy(initialCamPos); 
@@ -89,8 +101,20 @@
             const centerLineColor = 0xff00ff; // Magenta
             const gridLinesColor = 0x00ffff;  // Cyan
             grid = new THREE.GridHelper(gridSize, gridDivisions, centerLineColor, gridLinesColor);
+
+            let bigBlackRectangle = new THREE.Mesh(
+                new THREE.PlaneGeometry(gridSize, gridSize),
+                new THREE.MeshBasicMaterial({ color: 0x000000, side: THREE.DoubleSide })
+            );
+
+            bigBlackRectangle.rotation.x = Math.PI / 2;
+            bigBlackRectangle.position.y = -0.1;
+            bigBlackRectangle.position.z = -0.1;
             
+            scene.add(bigBlackRectangle);
             scene.add(grid);
+            scene.add(light);
+            scene.add(sunMesh);
 
             animate();
 
