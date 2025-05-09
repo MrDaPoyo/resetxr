@@ -65,14 +65,14 @@
             let light = new THREE.AmbientLight(0xffffff, 1);
 
             // Create a spherical sun instead of flat circle
-            let sun = new THREE.SphereGeometry(5, 64, 64);
+            let sun = new THREE.SphereGeometry(6, 32, 32);
             let sunMaterial = new THREE.MeshBasicMaterial({ 
-                color: 0xFFCC00, // Bright yellow
+                color: 0xae0eae, // Purple
                 emissive: 0xFFCC00, // Bright yellow
                 emissiveIntensity: 1
             });
             let sunMesh = new THREE.Mesh(sun, sunMaterial);
-            sunMesh.position.set(0, 0, -20); // Position it behind the grid
+            sunMesh.position.set(0, 0, -25); // Position it behind the grid
 
             camera = new THREE.PerspectiveCamera(75, container.clientWidth / container.clientHeight, 0.1, 1000);
             camera.position.copy(initialCamPos); 
