@@ -130,5 +130,5 @@
     });
 </script>
 
-<div id="three-container" style="width: 100%; height: 100vh;"></div>
+<div id="three-container" style="width: 100%; height: 100vh; z-index: -100;"></div>
 
