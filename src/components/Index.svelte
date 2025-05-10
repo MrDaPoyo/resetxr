@@ -15,6 +15,7 @@
     const initialLookAtTarget = new THREE.Vector3(0, 7, 0); // Look at grid origin initially
     const finalLookAtTarget = new THREE.Vector3(0, 0, -10); // Original lookAt target
     const currentLookAtTarget = new THREE.Vector3(); // To reuse in animation loop
+    import Reserve from './Reserve.svelte';
 
     function easeInOutQuad(t) {
         return t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
@@ -155,4 +156,46 @@
 </script>
 
 <div id="three-container" style="width: 100%; height: 100vh; z-index: -100;"></div>
+<main>
+    <div class="content">
+        <Reserve />
+        <img src="/full_logo.png" alt="ResetXR Logo" style="filter: invert(1); width: 100%;">
+        <p>ResetXR - Centro VR líder en Barcelona.</p>
+    </div>
+</main>
 
+<style>
+    main {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        height: 80vh;
+        transform: translate(-50%, -50%);
+        text-align: center;
+        color: white;
+        z-index: 100;
+        width: 80vw;
+        opacity: 1;
+        animation: fadeIn 4s ease-in-out;
+        backdrop-filter: blur(5px);
+        overflow-x: hidden;
+        overflow-y: auto;
+        border: 2px solid #ae0eae;
+    }
+
+    .content {
+        position: relative;
+    }
+
+    @keyframes fadeIn {
+        0% {
+            opacity: 0;
+        }
+        70% {
+            opacity: 0;
+        }
+        100% {
+            opacity: 1;
+        }
+    }
+</style>
