@@ -1,10 +1,10 @@
 <script>
-  import { onMount, afterUpdate } from 'svelte';
+  import { onMount, onDestroy, afterUpdate } from 'svelte';
   import { initStageManager } from './StageManager.js';
   import Page1 from './pages/Page1.svelte';
   import Page2 from './pages/Page2.svelte';
 
-  let canvas;
+  let canvasElement; // Renamed to avoid conflict with canvas global
   let selectedIndex = null;
   let overlayRect = null;
   let stageManagerApi = null;
@@ -25,87 +25,82 @@
     }
   ];
 
-  // Helper to get the plane's screen bounds for overlay
-  function getPlaneScreenRect() {
-    if (!canvas || selectedIndex === null || selectedIndex === -1) return null;
-    // These must match StageManager.js logic
-    const ACTIVE_PLANE_PADDING = 120;
-    const ACTIVE_PLANE_Z = 2.2;
-    const planeWidth = 2.4;
-    const planeHeight = 1.5;
-    const cameraZ = 5;
-    const cameraFov = 75;
-    const cameraAspect = canvas.clientWidth / canvas.clientHeight;
-    const distance = cameraZ - ACTIVE_PLANE_Z;
-    const halfFovRadians = Math.PI * (cameraFov / 180) / 2;
-    const halfVisibleHeight = distance * Math.tan(halfFovRadians);
-    const halfVisibleWidth = halfVisibleHeight * cameraAspect;
-    const paddingWorldY = (ACTIVE_PLANE_PADDING / canvas.clientHeight) * (halfVisibleHeight * 2);
-    const paddingWorldX = (ACTIVE_PLANE_PADDING / canvas.clientWidth) * (halfVisibleWidth * 2);
-    const maxPlaneWorldWidth = (halfVisibleWidth * 2) - paddingWorldX * 2;
-    const maxPlaneWorldHeight = (halfVisibleHeight * 2) - paddingWorldY * 2;
-    const planeAspect = planeWidth / planeHeight;
-    let finalWidth = maxPlaneWorldWidth;
-    let finalHeight = maxPlaneWorldHeight;
-    if (finalWidth / planeAspect > finalHeight) {
-      finalWidth = finalHeight * planeAspect;
-    } else {
-      finalHeight = finalWidth / planeAspect;
-    }
-    // Center of screen
-    const screenX = canvas.clientWidth / 2;
-    const screenY = canvas.clientHeight / 2;
-    // Scale to screen
-    const scaleX = finalWidth / (halfVisibleWidth * 2) * canvas.clientWidth;
-    const scaleY = finalHeight / (halfVisibleHeight * 2) * canvas.clientHeight;
-    return {
-      left: screenX - scaleX / 2,
-      top: screenY - scaleY / 2,
-      width: scaleX,
-      height: scaleY
-    };
-  }
-
   function updateOverlayRectLoop() {
-    if (selectedIndex !== null && selectedIndex !== -1) {
-      overlayRect = getPlaneScreenRect();
+    if (selectedIndex !== null && selectedIndex !== -1 && stageManagerApi) {
+      const newRect = stageManagerApi.getPlaneScreenBounds(selectedIndex);
+      if (newRect) {
+        overlayRect = newRect;
+      }
       animationFrameId = requestAnimationFrame(updateOverlayRectLoop);
+    } else {
+      overlayRect = null;
+      if (animationFrameId) {
+        cancelAnimationFrame(animationFrameId);
+        animationFrameId = null;
+      }
     }
   }
 
   onMount(() => {
-    stageManagerApi = initStageManager(canvas, pages, (index) => {
-      selectedIndex = index;
-      if (selectedIndex !== null && selectedIndex !== -1) {
-        updateOverlayRectLoop();
-      } else {
-        overlayRect = null;
-        if (animationFrameId) cancelAnimationFrame(animationFrameId);
-      }
-    });
-    window.addEventListener('resize', () => {
-      overlayRect = getPlaneScreenRect();
-    });
+    if (canvasElement) {
+      stageManagerApi = initStageManager(canvasElement, pages, (index) => {
+        const oldSelectedIndex = selectedIndex;
+        selectedIndex = index;
+
+        if (selectedIndex !== null && selectedIndex !== -1) {
+          // If loop wasn't running or was for a different item, (re)start it.
+          // The loop itself will fetch the new rect for the current selectedIndex.
+          if (!animationFrameId) {
+             updateOverlayRectLoop();
+          }
+        } else {
+          // Deselected, updateOverlayRectLoop will see selectedIndex is invalid and stop itself
+          // and clear overlayRect. Explicitly clear here just in case.
+          overlayRect = null;
+          if (animationFrameId) {
+            cancelAnimationFrame(animationFrameId);
+            animationFrameId = null;
+          }
+        }
+      });
+    }
+
+    // No Svelte-side resize listener needed for overlayRect,
+    // as StageManager.js handles its camera/renderer updates,
+    // and updateOverlayRectLoop will get correct coords.
   });
 
-  afterUpdate(() => {
-    if (selectedIndex !== null && selectedIndex !== -1 && !animationFrameId) {
-      updateOverlayRectLoop();
+  onDestroy(() => {
+    if (stageManagerApi && stageManagerApi.destroy) {
+      stageManagerApi.destroy();
     }
-    if (selectedIndex === null || selectedIndex === -1) {
-      overlayRect = null;
-      if (animationFrameId) cancelAnimationFrame(animationFrameId);
-      animationFrameId = null;
+    if (animationFrameId) {
+      cancelAnimationFrame(animationFrameId);
     }
   });
+
+  // afterUpdate is likely not needed anymore for managing the loop,
+  // as the onSelect callback and the loop itself handle the logic.
+  // $: console.log("Selected Index:", selectedIndex, "Overlay Rect:", overlayRect); // For debugging
 </script>
 
 <div class="stage-container">
-  <canvas bind:this={canvas} class="three-canvas"></canvas>
-  {#if selectedIndex !== null && selectedIndex !== -1 && overlayRect}
+  <canvas bind:this={canvasElement} class="three-canvas"></canvas>
+  {#if selectedIndex !== null && selectedIndex !== -1 && overlayRect && overlayRect.width > 0 && overlayRect.height > 0}
     <div
       class="page-overlay"
-      style="position: fixed; left: {overlayRect.left}px; top: {overlayRect.top}px; width: {overlayRect.width}px; height: {overlayRect.height}px; z-index: 10; pointer-events: auto; background: none; box-shadow: 0 0 32px 8px rgba(0,0,0,0.25);">
+      style="
+        position: fixed;
+        left: {overlayRect.left}px;
+        top: {overlayRect.top}px;
+        width: {overlayRect.width}px;
+        height: {overlayRect.height}px;
+        z-index: 10;
+        /* pointer-events: auto; Ensure this is here or page content is not interactive */
+        /* background: none; Allow component to set its background */
+        box-shadow: 0 0 32px 8px rgba(0,0,0,0.25);
+      "
+    >
       <svelte:component this={pages[selectedIndex].component} />
     </div>
   {/if}
@@ -116,21 +111,24 @@
     position: relative;
     width: 100vw;
     height: 100vh;
+    overflow: hidden; /* Prevent scrollbars if canvas is slightly off */
   }
 
   .three-canvas {
     position: absolute;
+    top: 0;
+    left: 0;
     width: 100%;
     height: 100%;
     display: block;
     z-index: 1;
   }
   .page-overlay {
-    pointer-events: auto;
-    /* No default background, so the real DOM is visible */
-    overflow: auto;
-    border-radius: 12px;
-    /* Optional: add a subtle background for readability */
-    background: rgba(10,20,40,0.85);
+    pointer-events: auto; /* IMPORTANT for interaction */
+    overflow: auto; /* If content is larger than the overlay */
+    border-radius: 12px; /* Or match your 3D plane's perceived rounding */
+    /* Example background, Page1/Page2 should probably define their own */
+    background: rgba(30, 30, 50, 0.9);
+    color: white; /* Example text color */
   }
 </style>
