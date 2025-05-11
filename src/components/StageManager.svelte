@@ -41,7 +41,7 @@
   {#if selectedIndex !== null && selectedIndex !== -1}
     <div
       class="page-overlay"
-      style="transform: translate(-50%, -50%) translate({overlayX}px, {overlayY}px);"
+      style="top: 50%; left: 50%; transform: translate(-50%, -50%);"
     >
       <svelte:component this={pages[selectedIndex].component} />
     </div>

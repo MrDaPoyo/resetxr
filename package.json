@@ -12,6 +12,7 @@
     "@astrojs/svelte": "^7.0.13",
     "animejs": "^4.0.2",
     "astro": "^5.7.12",
+    "gsap": "^3.13.0",
     "svelte": "^5.28.2",
     "three": "^0.176.0",
     "typescript": "^5.8.3"
