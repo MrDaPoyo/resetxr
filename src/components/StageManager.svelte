@@ -6,6 +6,8 @@
 
   let canvas;
   let selectedIndex = null;
+  let overlayX = 0;
+  let overlayY = 0;
 
   const pages = [
     {
@@ -23,8 +25,12 @@
   ];
 
   onMount(() => {
-    initStageManager(canvas, pages, (index) => {
+    initStageManager(canvas, pages, (index, pos) => {
       selectedIndex = index;
+      if (pos) {
+        overlayX = pos.x;
+        overlayY = pos.y;
+      }
     });
   });
 </script>
@@ -32,8 +38,11 @@
 <div class="stage-container">
   <canvas bind:this={canvas} class="three-canvas"></canvas>
 
-  {#if selectedIndex !== null}
-    <div class="page-overlay">
+  {#if selectedIndex !== null && selectedIndex !== -1}
+    <div
+      class="page-overlay"
+      style="transform: translate(-50%, -50%) translate({overlayX}px, {overlayY}px);"
+    >
       <svelte:component this={pages[selectedIndex].component} />
     </div>
   {/if}
@@ -56,11 +65,11 @@
 
   .page-overlay {
     position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
     z-index: 2;
-    background: rgba(0, 0, 0, 0.2); /* Optional: adds depth separation */
+    width: 640px;
+    height: 400px;
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    pointer-events: auto;
   }
 </style>
