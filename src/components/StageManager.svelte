@@ -3,6 +3,7 @@
   import { initStageManager } from './StageManager.js';
   import Page1 from './pages/Page1.svelte';
   import Page2 from './pages/Page2.svelte';
+  import '../styles/StageManager.css';
 
   let canvasElement; // Renamed to avoid conflict with canvas global
   let selectedIndex = null;
@@ -105,30 +106,3 @@
     </div>
   {/if}
 </div>
-
-<style>
-  .stage-container {
-    position: relative;
-    width: 100vw;
-    height: 100vh;
-    overflow: hidden; /* Prevent scrollbars if canvas is slightly off */
-  }
-
-  .three-canvas {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    display: block;
-    z-index: 1;
-  }
-  .page-overlay {
-    pointer-events: auto; /* IMPORTANT for interaction */
-    overflow: auto; /* If content is larger than the overlay */
-    border-radius: 12px; /* Or match your 3D plane's perceived rounding */
-    /* Example background, Page1/Page2 should probably define their own */
-    background: rgba(30, 30, 50, 0.9);
-    color: white; /* Example text color */
-  }
-</style>
