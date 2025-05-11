@@ -65,28 +65,66 @@ export function initStageManager(canvas, pages, onSelect) {
 
   canvas.addEventListener('click', onClick);
 
-  function selectWindow(index) {
+  function selectWindow(selectedIndex) { // Renamed parameter to avoid conflict
+    const activeScaleFactor = 2.5; // How much larger the active window should be
+    const activeZPosition = 1;     // How close the active window comes to the camera (camera is at z=5)
+    const inactiveItemRotationY = 0.15; // The default inward tilt for sidebar items
+
     pages.forEach((_, i) => {
       const mesh = planes[i];
-      const isActive = i === index;
+      const isActive = i === selectedIndex;
+
+      let targetPos = {};
+      let targetRot = {};
+      let targetScale = { x: 1, y: 1, z: 1 }; // Default to original scale
+
+      if (isActive) {
+        targetPos = {
+          x: 0, // Center of the screen
+          y: 0, // Center of the screen
+          z: activeZPosition,
+        };
+        targetRot = {
+          y: 0, // Face the camera directly
+        };
+        targetScale = {
+          x: activeScaleFactor,
+          y: activeScaleFactor,
+          z: 1, // Scale is 2D for a plane
+        };
+        if (onSelect) {
+          onSelect(selectedIndex); 
+        }
+      } else {
+        // Return to, or stay in, the sidebar position
+        targetPos = {
+          x: targetPlaneX,    // Calculated X position for the sidebar
+          y: 1.2 - i * 1.4, // Original Y stacking in the sidebar
+          z: planesConstantZ, // Original Z depth in the sidebar
+        };
+        targetRot = {
+          y: inactiveItemRotationY, // Original inward tilt
+        };
+        // Scale remains 1 (already set in targetScale default)
+      }
 
       gsap.to(mesh.position, {
-        x: isActive ? 0 : -1 + i * 0.4,
-        y: isActive ? 0 : i * -0.4,
-        z: isActive ? 0 : -i * 1.2,
+        ...targetPos,
         duration: 0.7,
-        ease: 'power3.out'
+        ease: 'power3.out',
       });
 
       gsap.to(mesh.rotation, {
-        y: isActive ? 0 : -0.3,
+        ...targetRot,
         duration: 0.5,
-        ease: 'power3.out'
+        ease: 'power3.out',
       });
 
-      if (isActive) {
-        onSelect(index); 
-      }
+      gsap.to(mesh.scale, {
+        ...targetScale,
+        duration: 0.7,
+        ease: 'power3.out',
+      });
     });
   }
 }
