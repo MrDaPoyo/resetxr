@@ -38,6 +38,11 @@ export function initStageManager(canvas, pages, onSelect) {
   const centerX = 0;
   const centerY = 0;
 
+  // === Adjustable parameters for active plane ===
+  const ACTIVE_PLANE_PADDING = 120; // px, margin from viewport edge when active
+  const ACTIVE_PLANE_Z = 2.2; // z position of active plane (further = smaller)
+  // ============================================
+
   let currentSelectedIndex = -1;
 
   pages.forEach((page, i) => {
@@ -101,23 +106,46 @@ export function initStageManager(canvas, pages, onSelect) {
     }
   }
 
+  // --- Animation smoothness fix: render after every GSAP update ---
+  function renderScene() {
+    renderer.render(scene, camera);
+  }
+
   function selectWindow(selectedIndex) {
     const activeIndex = selectedIndex;
+
+    // Calculate visible size at ACTIVE_PLANE_Z using camera FOV and aspect
+    const distance = camera.position.z - ACTIVE_PLANE_Z;
+    const halfFovRadians = THREE.MathUtils.degToRad(camera.fov / 2);
+    const halfVisibleHeight = distance * Math.tan(halfFovRadians);
+    const halfVisibleWidth = halfVisibleHeight * camera.aspect;
+    // Convert padding from px to world units
+    const paddingWorldY = (ACTIVE_PLANE_PADDING / canvas.clientHeight) * (halfVisibleHeight * 2);
+    const paddingWorldX = (ACTIVE_PLANE_PADDING / canvas.clientWidth) * (halfVisibleWidth * 2);
+    const maxPlaneWorldWidth = (halfVisibleWidth * 2) - paddingWorldX * 2;
+    const maxPlaneWorldHeight = (halfVisibleHeight * 2) - paddingWorldY * 2;
+    const planeAspect = planeWidth / planeHeight;
+    let finalWidth = maxPlaneWorldWidth;
+    let finalHeight = maxPlaneWorldHeight;
+    if (finalWidth / planeAspect > finalHeight) {
+      finalWidth = finalHeight * planeAspect;
+    } else {
+      finalHeight = finalWidth / planeAspect;
+    }
+    const scaleX = finalWidth / planeWidth;
+    const scaleY = finalHeight / planeHeight;
 
     pages.forEach((_, i) => {
       const mesh = planes[i];
       const isActive = i === activeIndex;
-
       let targetPos, targetRot, targetScale;
-
       if (isActive) {
-        targetPos = { x: centerX, y: centerY, z: selectedZ };
+        targetPos = { x: centerX, y: centerY, z: ACTIVE_PLANE_Z };
         targetRot = { y: 0 };
-        targetScale = selectedScale;
+        targetScale = { x: scaleX, y: scaleY, z: 1 };
       } else {
         let yIndex = i;
         if (activeIndex !== -1 && i > activeIndex) yIndex += 1;
-
         targetPos = {
           x: targetPlaneX,
           y: baseY - yIndex * ySpacing,
@@ -126,23 +154,23 @@ export function initStageManager(canvas, pages, onSelect) {
         targetRot = { y: sidebarRotation };
         targetScale = sidebarScale;
       }
-
       gsap.to(mesh.position, {
         ...targetPos,
         duration: 0.7,
-        ease: 'power3.out'
+        ease: 'power3.out',
+        onUpdate: renderScene
       });
-
       gsap.to(mesh.rotation, {
         ...targetRot,
         duration: 0.5,
-        ease: 'power3.out'
+        ease: 'power3.out',
+        onUpdate: renderScene
       });
-
       gsap.to(mesh.scale, {
         ...targetScale,
         duration: 0.7,
-        ease: 'power3.out'
+        ease: 'power3.out',
+        onUpdate: renderScene
       });
     });
   }
@@ -159,4 +187,16 @@ export function initStageManager(canvas, pages, onSelect) {
       y: (-vector.y + 1) / 2 * bounds.height
     };
   }
+
+  function updatePlaneTexture(index, canvasEl) {
+    if (!planes[index] || !canvasEl) return;
+    const texture = new THREE.CanvasTexture(canvasEl);
+    texture.needsUpdate = true;
+    planes[index].material.map = texture;
+    planes[index].material.needsUpdate = true;
+  }
+
+  return {
+    updatePlaneTexture
+  };
 }
