@@ -1,0 +1,65 @@
+/* 1. Variable font: geometric but humane, similar to the poster’s grotesk */
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&display=swap');
+
+.title-stack {
+    position: absolute;
+    top: 25vh;
+    left: 5vw;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 1.4s ease 0.4s;
+    /* makes stacking easier */
+    --stroke: 0.012em;       /* subtle outline for glow */
+    --blur:   8px;           /* matches neon ground */
+}
+.title-stack.visible { opacity: 1; }
+
+/***********
+ *  HEADLINE LAYERS
+ ***********/
+.layer {
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700;
+    font-size: clamp(5rem, 10vw, 11rem);
+    line-height: 0.85;
+    margin: 0;
+    letter-spacing: -0.01em;
+    color: #fff;
+    text-shadow:
+        0 0 var(--blur) rgba(0, 255, 255, .45),
+        0 0 calc(var(--blur) * 2) rgba(0, 255, 255, .35);
+    /* let clones sit exactly on top of each other */
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+/* depth offsets mimic the poster’s staircase */
+.clone.d1 { translate: 0 0.8em;   opacity: 0.66; }
+.clone.d2 { translate: 0 1.6em;   opacity: 0.33; }
+
+/* mirrored clones for the “reflection” effect */
+.mirror   { transform: scaleY(-1); }
+.mirror.m1 { translate: 0 4.4em;  opacity: 0.38; }
+.mirror.m2 { translate: 0 5.2em;  opacity: 0.20; }
+
+/***********
+ *  SUBTITLE
+ ***********/
+.subtitle {
+    position: relative;   /* sits below the stack, not cloned */
+    margin-top: calc(6.5em + 2vh);
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 500;
+    font-size: clamp(1.25rem, 2.2vw, 2rem);
+    letter-spacing: 0.06em;
+    color: #e0e0e0;
+    text-shadow: 0 0 6px rgba(0,0,0,.55);
+}
+
+/***********
+ *  SMALL VIEWPORT ADJUSTMENTS
+ ***********/
+@media (max-width: 900px) {
+    .mirror.m2 { display: none; } /* keep it airy on phones */
+}

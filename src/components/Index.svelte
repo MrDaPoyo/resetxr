@@ -4,6 +4,7 @@
     import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';
     import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
     import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass.js';
+    import '../styles/index.css'; // Updated import path
 
     let resizeListener;
 
@@ -163,39 +164,3 @@
         <p>ResetXR - Centro VR líder en Barcelona.</p>
     </div>
 </main>
-
-<style>
-    main {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        height: 80vh;
-        transform: translate(-50%, -50%);
-        text-align: center;
-        color: white;
-        z-index: 100;
-        width: 80vw;
-        opacity: 1;
-        animation: fadeIn 4s ease-in-out;
-        backdrop-filter: blur(5px);
-        overflow-x: hidden;
-        overflow-y: auto;
-        border: 2px solid #ae0eae;
-    }
-
-    .content {
-        position: relative;
-    }
-
-    @keyframes fadeIn {
-        0% {
-            opacity: 0;
-        }
-        70% {
-            opacity: 0;
-        }
-        100% {
-            opacity: 1;
-        }
-    }
-</style>
