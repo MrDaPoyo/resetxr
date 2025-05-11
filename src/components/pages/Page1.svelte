@@ -1,13 +1,7 @@
 <script>
-  // Import Reserve.svelte, path is relative to Page1.svelte in src/components/pages/
-  // import Reserve from '../Reserve.svelte'; // Removed as the file is deleted
 </script>
 
 <div class="page-container">
-  <!-- Content from original Index.svelte main section -->
-  <!-- <a href="https://booking.resetxr.es/v2/#book" id="reserve" style="display: block; text-align: center; margin-bottom: 20px;">
-    <Reserve />
-  </a> -->
 
   <img
     src="/full_logo.png"
@@ -19,6 +13,8 @@
   <h1 style="margin-top: 30px;">Main Hub</h1>
   <p>This is the primary content area, now managed by the Stage Manager.</p>
   <p>The Three.js scene from Index.svelte provides the animated background.</p>
+
+  <button on:click={() => alert("page is interactive")}>click me!</button>
 </div>
 
 <style>
