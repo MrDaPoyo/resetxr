@@ -20,26 +20,19 @@ export function initStageManager(canvas, pages, onSelectCallback) { // Renamed o
   const planeWidth = 2.4;
   const planeHeight = 1.5;
 
-  // Initial calculation for sidebar X position (could be made dynamic on resize if desired)
-  let distanceToPlanes = camera.position.z - planesConstantZ;
-  let halfFovRadians = THREE.MathUtils.degToRad(camera.fov / 2);
-  let halfVisibleHeightAtDepth = distanceToPlanes * Math.tan(halfFovRadians);
-  let halfVisibleWidthAtDepth = halfVisibleHeightAtDepth * camera.aspect;
-  let viewportLeftEdgeX = -halfVisibleWidthAtDepth;
-  const paddingFromLeftEdge = 1; // World units from left edge
-  let targetPlaneX = viewportLeftEdgeX + paddingFromLeftEdge + (planeWidth / 2);
+  // Opacity settings from previous step
+  const sidebarPlaneOpacity = 0.6;
+  const activePlaneOpacity = 1.0;
 
+  // Circle layout parameters
+  const circleRadius = 3.5; // Radius of the circle for panel arrangement
+  const planeTiltX = 0; // Slight downward tilt for planes in the circle
 
-  const baseY = 1.2;
-  const ySpacing = 1.7;
-  const sidebarRotation = 0.15;
-  const sidebarScale = { x: 1, y: 1, z: 1 };
-  // const selectedScale = { x: 1, y: 1, z: 1 }; // Not used directly, calculated dynamically
-  // const selectedZ = 1; // Not used directly, ACTIVE_PLANE_Z is used
+  const sidebarScale = { x: 1, y: 1, z: 1 }; // Default scale for inactive planes
   const centerX = 0;
   const centerY = 0;
 
-  const ACTIVE_PLANE_PADDING = 200; // px, margin from viewport edge when active
+  const ACTIVE_PLANE_PADDING = 200;
   const ACTIVE_PLANE_Z = 2.2;
 
   let currentSelectedIndex = -1;
@@ -56,13 +49,20 @@ export function initStageManager(canvas, pages, onSelectCallback) { // Renamed o
     const material = new THREE.MeshBasicMaterial({
       map: texture,
       side: THREE.DoubleSide,
-      transparent: true
+      transparent: true,
+      opacity: sidebarPlaneOpacity // Initial opacity for planes
     });
     const mesh = new THREE.Mesh(geometry, material);
 
-    mesh.position.set(targetPlaneX, baseY - i * ySpacing, planesConstantZ);
-    mesh.rotation.y = sidebarRotation;
-    mesh.userData = { index: i };
+    // Calculate position and rotation for circular layout
+    const angle = (i / pages.length) * Math.PI * 2; // Distribute planes evenly
+    const x = circleRadius * Math.cos(angle);
+    const y = circleRadius * Math.sin(angle);
+
+    mesh.position.set(x, y, planesConstantZ);
+    mesh.rotation.y = angle + Math.PI / 2; // Orient planes to face outwards from circle center
+    mesh.rotation.x = planeTiltX; // Apply tilt
+    mesh.userData = { index: i, baseAngle: angle + Math.PI / 2 }; // Store base angle for animation
 
     scene.add(mesh);
     planes.push(mesh);
@@ -133,24 +133,29 @@ export function initStageManager(canvas, pages, onSelectCallback) { // Renamed o
     const scaleX = finalWidth / planeWidth;
     const scaleY = finalHeight / planeHeight;
 
-    let visualIndexInSidebar = 0;
     planes.forEach((mesh, i) => {
       const isActive = i === activeIndex;
-      let targetPos, targetRot, targetScale;
+      let targetPos, targetRot, targetScale, targetOpacity;
 
       if (isActive) {
         targetPos = { x: centerX, y: centerY, z: ACTIVE_PLANE_Z };
-        targetRot = { y: 0 };
+        targetRot = { y: 0, x: 0, z: 0 }; // Face camera directly, no tilt
         targetScale = { x: scaleX, y: scaleY, z: 1 };
+        targetOpacity = activePlaneOpacity;
       } else {
+        // Calculate position and rotation for circular layout
+        const angle = (i / pages.length) * Math.PI * 2;
+        const x = circleRadius * Math.cos(angle);
+        const y = circleRadius * Math.sin(angle);
+
         targetPos = {
-          x: targetPlaneX,
-          y: baseY - visualIndexInSidebar * ySpacing,
+          x: x,
+          y: y,
           z: planesConstantZ
         };
-        visualIndexInSidebar++;
-        targetRot = { y: sidebarRotation };
+        targetRot = { y: angle + Math.PI / 2, x: planeTiltX, z: 0 }; // Orient outwards, apply tilt
         targetScale = sidebarScale;
+        targetOpacity = sidebarPlaneOpacity;
       }
 
       gsap.to(mesh.position, {
@@ -170,6 +175,11 @@ export function initStageManager(canvas, pages, onSelectCallback) { // Renamed o
         duration: 0.7,
         ease: 'power3.out',
         onUpdate: renderScene
+      });
+      gsap.to(mesh.material, { // Animate opacity
+        opacity: targetOpacity,
+        duration: 0.7,
+        ease: 'power3.out',
       });
     });
   }
@@ -252,26 +262,48 @@ export function initStageManager(canvas, pages, onSelectCallback) { // Renamed o
     camera.aspect = width / height;
     camera.updateProjectionMatrix();
     renderer.setSize(width, height);
-    // renderer.setPixelRatio(window.devicePixelRatio); // Usually set once, but good to be aware
 
-    // Recalculate sidebar X position based on new aspect ratio
-    distanceToPlanes = camera.position.z - planesConstantZ; // Stays same
-    halfFovRadians = THREE.MathUtils.degToRad(camera.fov / 2); // Stays same
-    halfVisibleHeightAtDepth = distanceToPlanes * Math.tan(halfFovRadians);
-    halfVisibleWidthAtDepth = halfVisibleHeightAtDepth * camera.aspect; // This changes
-    viewportLeftEdgeX = -halfVisibleWidthAtDepth; // This changes
-    targetPlaneX = viewportLeftEdgeX + paddingFromLeftEdge + (planeWidth / 2); // This changes
+    // If an item is selected, we might want to re-evaluate its scale/position
+    // or simply let selectWindow handle it if called again (e.g. by a re-click)
+    // For now, if an item is active, its size will be updated next time selectWindow is called
+    // or if we explicitly call a re-positioning/scaling function here.
+    // To ensure the active plane resizes immediately if it's already selected:
+    if (currentSelectedIndex !== -1) {
+      // Re-apply the selection logic to adjust size and position based on new aspect ratio
+      // This will re-trigger animations, which might be desired or not.
+      // A more subtle update would involve directly calculating and setting the new scale/pos
+      // without the full animation. For simplicity, we can re-trigger.
+      // selectWindow(currentSelectedIndex); // Option 1: Re-trigger full animation
+      
+      // Option 2: More direct update (example for scale, position might also need adjustment)
+      const plane = planes[currentSelectedIndex];
+      if (plane) {
+        const distanceToActivePlane = camera.position.z - ACTIVE_PLANE_Z;
+        const currentHalfFovRadians = THREE.MathUtils.degToRad(camera.fov / 2);
+        const halfVisibleHeightAtActiveZ = distanceToActivePlane * Math.tan(currentHalfFovRadians);
+        const halfVisibleWidthAtActiveZ = halfVisibleHeightAtActiveZ * camera.aspect;
 
-    // If a window is not selected, or if you want sidebar items to snap to new position:
-    if (currentSelectedIndex === -1) {
-      planes.forEach((mesh, i) => {
-        if (mesh.userData.index !== currentSelectedIndex) { // Avoid moving the active plane if one is selected
-           gsap.to(mesh.position, { x: targetPlaneX, duration: 0.3 });
+        const paddingWorldY = (ACTIVE_PLANE_PADDING / renderer.domElement.clientHeight) * (halfVisibleHeightAtActiveZ * 2);
+        const paddingWorldX = (ACTIVE_PLANE_PADDING / renderer.domElement.clientWidth) * (halfVisibleWidthAtActiveZ * 2);
+        const maxPlaneWorldWidth = (halfVisibleWidthAtActiveZ * 2) - paddingWorldX * 2;
+        const maxPlaneWorldHeight = (halfVisibleHeightAtActiveZ * 2) - paddingWorldY * 2;
+
+        const planeAspect = planeWidth / planeHeight;
+        let finalWidth = maxPlaneWorldWidth;
+        let finalHeight = maxPlaneWorldHeight;
+
+        if (finalWidth / planeAspect > finalHeight) {
+          finalWidth = finalHeight * planeAspect;
+        } else {
+          finalHeight = finalWidth / planeAspect;
         }
-      });
+        const newScaleX = finalWidth / planeWidth;
+        const newScaleY = finalHeight / planeHeight;
+
+        gsap.to(plane.scale, { x: newScaleX, y: newScaleY, z: 1, duration: 0.3, ease: 'power3.out' });
+        // Position (centerX, centerY, ACTIVE_PLANE_Z) should still be correct.
+      }
     }
-    // If a window IS selected, its target X for when it returns to sidebar will be this new targetPlaneX.
-    // The active plane's size/pos calc in selectWindow already uses current canvas dimensions.
   }
   window.addEventListener('resize', onWindowResize);
 
