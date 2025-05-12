@@ -20,10 +20,6 @@ export function initStageManager(canvas, pages, onSelectCallback) { // Renamed o
   const planeWidth = 2.4;
   const planeHeight = 1.5;
 
-  // Opacity settings from previous step
-  const sidebarPlaneOpacity = 0.6;
-  const activePlaneOpacity = 1.0;
-
   // Circle layout parameters
   const circleRadius = 3.5; // Radius of the circle for panel arrangement
   const planeTiltX = 0; // Slight downward tilt for planes in the circle
@@ -50,7 +46,6 @@ export function initStageManager(canvas, pages, onSelectCallback) { // Renamed o
       map: texture,
       side: THREE.DoubleSide,
       transparent: true,
-      opacity: sidebarPlaneOpacity // Initial opacity for planes
     });
     const mesh = new THREE.Mesh(geometry, material);
 
@@ -135,13 +130,12 @@ export function initStageManager(canvas, pages, onSelectCallback) { // Renamed o
 
     planes.forEach((mesh, i) => {
       const isActive = i === activeIndex;
-      let targetPos, targetRot, targetScale, targetOpacity;
+      let targetPos, targetRot, targetScale;
 
       if (isActive) {
         targetPos = { x: centerX, y: centerY, z: ACTIVE_PLANE_Z };
         targetRot = { y: 0, x: 0, z: 0 }; // Face camera directly, no tilt
         targetScale = { x: scaleX, y: scaleY, z: 1 };
-        targetOpacity = activePlaneOpacity;
       } else {
         // Calculate position and rotation for circular layout
         const angle = (i / pages.length) * Math.PI * 2;
@@ -155,8 +149,23 @@ export function initStageManager(canvas, pages, onSelectCallback) { // Renamed o
         };
         targetRot = { y: angle + Math.PI / 2, x: planeTiltX, z: 0 }; // Orient outwards, apply tilt
         targetScale = sidebarScale;
-        targetOpacity = sidebarPlaneOpacity;
       }
+
+      // Normalize target Y rotation for shortest path
+      let currentYRotation = mesh.rotation.y;
+      let desiredYRotation = targetRot.y;
+
+      let diffY = desiredYRotation - currentYRotation;
+      while (diffY > Math.PI) {
+        desiredYRotation -= 2 * Math.PI;
+        diffY = desiredYRotation - currentYRotation; // Recalculate difference
+      }
+      while (diffY < -Math.PI) {
+        desiredYRotation += 2 * Math.PI;
+        diffY = desiredYRotation - currentYRotation; // Recalculate difference
+      }
+      // Create a new target rotation object with the normalized Y value
+      const finalTargetRot = { ...targetRot, y: desiredYRotation };
 
       gsap.to(mesh.position, {
         ...targetPos,
@@ -165,7 +174,10 @@ export function initStageManager(canvas, pages, onSelectCallback) { // Renamed o
         onUpdate: renderScene
       });
       gsap.to(mesh.rotation, {
-        ...targetRot,
+        // Use the normalized rotation target
+        x: finalTargetRot.x,
+        y: finalTargetRot.y,
+        z: finalTargetRot.z,
         duration: 0.5,
         ease: 'power3.out',
         onUpdate: renderScene
@@ -175,11 +187,6 @@ export function initStageManager(canvas, pages, onSelectCallback) { // Renamed o
         duration: 0.7,
         ease: 'power3.out',
         onUpdate: renderScene
-      });
-      gsap.to(mesh.material, { // Animate opacity
-        opacity: targetOpacity,
-        duration: 0.7,
-        ease: 'power3.out',
       });
     });
   }
