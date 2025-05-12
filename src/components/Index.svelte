@@ -5,6 +5,7 @@
 	import { RenderPass } from "three/examples/jsm/postprocessing/RenderPass.js";
 	import { UnrealBloomPass } from "three/examples/jsm/postprocessing/UnrealBloomPass.js";
 	import "../styles/index.css";
+	import StageManager from './StageManager.svelte'; // Import the StageManager
 
 	let resizeListener;
 
@@ -177,19 +178,7 @@
 
 <div
 	id="three-container"
-	style="width: 100%; height: 100vh; z-index: -100;"
+	style="position: fixed; top: 0; left: 0; width: 100%; height: 100vh; z-index: 1;"
 ></div>
-<main>
-	<div class="content">
-		<a href="https://booking.resetxr.es/v2/#book" id="reserve">
-			<button>¡Reserva ya!</button>
-		</a>
 
-		<img
-			src="/full_logo.png"
-			alt="ResetXR Logo"
-			style="filter: invert(1); width: 100%; margin: 0;"
-		/>
-		<p style="margin-top: 0;">Centro VR líder en Barcelona.</p>
-	</div>
-</main>
+<StageManager />
