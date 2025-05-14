@@ -3,6 +3,8 @@
   import { initStageManager } from './StageManager.js';
   import Page1 from './pages/Page1.svelte';
   import Page2 from './pages/Page2.svelte';
+  import Page3 from './pages/Page3.svelte'; // Added import for Page3
+  import Page4 from './pages/Page4.svelte'; // Added import for Page4
   import '../styles/StageManager.css';
 
   let canvasElement; // Renamed to avoid conflict with canvas global
@@ -23,6 +25,18 @@
       title: 'VR Gallery',
       thumbnail: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/ee/Sobol_bur.jpg/640px-Sobol_bur.jpg',
       component: Page2
+    },
+    {
+      id: 'services', // New ID for Page 3
+      title: 'Our Services', // Label for Page 3
+      thumbnail: 'https://via.placeholder.com/300x200.png?text=Services', // Placeholder thumbnail
+      component: Page3 // Component for Page 3
+    },
+    {
+      id: 'contact', // New ID for Page 4
+      title: 'Contact Info', // Label for Page 4
+      thumbnail: 'https://via.placeholder.com/300x200.png?text=Contact', // Placeholder thumbnail
+      component: Page4 // Component for Page 4
     }
   ];
 
