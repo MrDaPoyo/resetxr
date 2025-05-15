@@ -5,7 +5,6 @@
 	import { RenderPass } from "three/examples/jsm/postprocessing/RenderPass.js";
 	import { UnrealBloomPass } from "three/examples/jsm/postprocessing/UnrealBloomPass.js";
 	import "../styles/index.css";
-	import StageManager from './StageManager.svelte'; // Import the StageManager
 
 	let resizeListener;
 
@@ -174,11 +173,12 @@
 			}
 		}
 	});
+
+	import Links from "./Links.svelte";
 </script>
 
+<Links />
 <div
 	id="three-container"
 	style="position: fixed; top: 0; left: 0; width: 100%; height: 100vh; z-index: 1;"
 ></div>
-
-<StageManager />
