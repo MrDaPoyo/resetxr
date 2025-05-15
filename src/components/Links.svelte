@@ -3,7 +3,7 @@
     // Default links if none provided
     if (links.length === 0) {
         links = [
-            { id: 1, url: "#", imageUrl: "https://placehold.co/400", text: "Link 1" },
+            { id: 1, url: "/about", imageUrl: "https://placehold.co/400", text: "About" },
             { id: 2, url: "#", imageUrl: "https://placehold.co/400", text: "Link 2" },
             { id: 3, url: "#", imageUrl: "https://placehold.co/400", text: "Link 3" }
         ];
@@ -58,6 +58,7 @@
         animation: fadeInBounce 1s ease-out forwards;
         text-decoration: none;
         max-width: 20vw;
+        min-width: 70px;
     }
 
     .trail-wrapper {
