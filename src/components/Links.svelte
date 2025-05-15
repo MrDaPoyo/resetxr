@@ -1,11 +1,6 @@
-<!-- src/components/Links.svelte -->
 <script>
-    import { createEventDispatcher } from 'svelte';
-
     export let links = [];
-    const dispatch = createEventDispatcher();
-
-    // default links
+    // Default links if none provided
     if (links.length === 0) {
         links = [
             { id: 1, url: "#", imageUrl: "https://placehold.co/400", text: "Link 1" },
@@ -13,25 +8,24 @@
             { id: 3, url: "#", imageUrl: "https://placehold.co/400", text: "Link 3" }
         ];
     }
-
-    function select(link) {
-        dispatch('select', { link });
-    }
 </script>
 
 <div class="links-container">
     {#each links as link, i}
-        <a
-            href={link.url}
-            class="link-item"
+        <a 
+            href={link.url} 
+            class="link-item" 
             style="animation-delay: {2 + i * 0.3}s;"
-            on:click|preventDefault={() => select(link)}
         >
             <div class="trail-wrapper">
-                <div class="trail trail-1" style="background-image: url({link.imageUrl});"></div>
-                <div class="trail trail-2" style="background-image: url({link.imageUrl});"></div>
-                <div class="trail trail-3" style="background-image: url({link.imageUrl});"></div>
-                <img src={link.imageUrl} alt={link.text} class="main-image" />
+                <div class="trail trail-1" style="background-image: url('{link.imageUrl}');"></div>
+                <div class="trail trail-2" style="background-image: url('{link.imageUrl}');"></div>
+                <div class="trail trail-3" style="background-image: url('{link.imageUrl}');"></div>
+                <img 
+                    src={link.imageUrl} 
+                    alt={link.text} 
+                    class="main-image"
+                />
                 {#if link.text}
                     <div class="image-title">{link.text}</div>
                 {/if}
@@ -47,7 +41,7 @@
         align-items: center;
         flex-direction: row;
         flex-wrap: wrap;
-        gap: 1rem;
+        gap: 3rem;
         padding: 2rem;
         z-index: 1000000;
         position: absolute;
@@ -63,7 +57,7 @@
         transform: translateY(-50px);
         animation: fadeInBounce 1s ease-out forwards;
         text-decoration: none;
-        max-width: 10vw;
+        max-width: 20vw;
     }
 
     .trail-wrapper {
