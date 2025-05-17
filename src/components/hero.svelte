@@ -174,11 +174,13 @@
 	});
 </script>
 
-<div id="three-container" style="width: 100%; height: 100vh;"></div>
+<div id="three-container" style="width: 100%; height: 100vh;">
+	<div class="inverse-gradient"></div>
+</div>
 <div class="hero">
 	<div class="hero-text">
 		<h1 style="font-size: 4rem; font-weight: bold; margin-bottom: 0;">Reset·XR</h1>
-		<h3 style="font-size: 2rem; margin-top: 0;">Centro de realidad virtual líder en Barcelona</h3>
+		<p style="font-size: 2rem; margin-top: 0;">Centro de realidad virtual líder en Barcelona</p>
 		<a href="#games"><button>Explorar Juegos</button></a>
 	</div>
 	<div
@@ -217,7 +219,7 @@
 		transform: translate(-50%, -50%);
 		text-align: center;
 		color: white;
-		z-index: 10;
+		z-index: 100;
 		font-size: 2rem;
 	}
 	.hero-text {
@@ -226,6 +228,22 @@
 		left: 50%;
 		transform: translate(-50%, -50%);
 		text-align: center;
+		z-index: 100;
+	}
+
+	.inverse-gradient {
+		position: absolute;
+		top: 0;
+		left: 0;
+		transform: translate(-50%, -50%);
+		width: 400vw;
+		height: 400vh;
+		background: radial-gradient(
+			circle,
+			rgba(0, 0, 0, 0.5) 0%,
+			rgba(0, 0, 0, 0.5) 50%,
+			rgba(0, 0, 0, 1) 100%
+		);
 		z-index: 10;
 	}
 
