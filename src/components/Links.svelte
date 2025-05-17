@@ -8,14 +8,31 @@
             { id: 3, url: "#", imageUrl: "https://placehold.co/400", text: "Link 3" }
         ];
     }
+
+    let animation_delay = 2;
+    let home = false;
+    if (window.location.pathname != "/") {
+        home = true;
+    }
 </script>
 
 <div class="links-container">
+    {#if home}
+        <a href="/" class="link-item" style="animation-delay: {animation_delay}s;">
+            <div class="trail-wrapper">
+                <div class="trail trail-1" style="background-image: url('https://placehold.co/400');"></div>
+                <div class="trail trail-2" style="background-image: url('https://placehold.co/400');"></div>
+                <div class="trail trail-3" style="background-image: url('https://placehold.co/400');"></div>
+                <img src="https://placehold.co/400" alt="Home" class="main-image" />
+                <div class="image-title">Home</div>
+            </div>
+        </a>
+    {/if}
     {#each links as link, i}
         <a 
             href={link.url} 
             class="link-item" 
-            style="animation-delay: {2 + i * 0.3}s;"
+            style="animation-delay: {animation_delay + i * 0.3}s;"
         >
             <div class="trail-wrapper">
                 <div class="trail trail-1" style="background-image: url('{link.imageUrl}');"></div>
@@ -40,7 +57,6 @@
         justify-content: center;
         align-items: center;
         flex-direction: row;
-        flex-wrap: wrap;
         gap: 3rem;
         padding: 2rem;
         z-index: 1000000;
@@ -57,8 +73,9 @@
         transform: translateY(-50px);
         animation: fadeInBounce 1s ease-out forwards;
         text-decoration: none;
-        max-width: 20vw;
-        min-width: 70px;
+        max-width: 10vw;
+        max-height: 10vw;
+        min-width: 30px;
     }
 
     .trail-wrapper {
