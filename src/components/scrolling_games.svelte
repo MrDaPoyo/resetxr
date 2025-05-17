@@ -1,29 +1,33 @@
 <script>
 	let { direction = "down", width = 10, length = 3, styles = "" } = $props();
+	const tiles = Array(width);
 </script>
 
-<div
-	class="marquee {direction}"
-	style="--length: {length}; {styles}"
->
+<div class="marquee {direction}" style="--length: {length}; {styles}">
 	<div class="marquee-content">
 		<div class="strip">
-			{#each Array(width) as _}
+			{#each tiles as _}
 				<div class="tile">
-                    <div class="tile-front">
-                        <img alt="Balatro" src="/library_600x900.jpg" draggable="false">
-                        <p>Balatro</p>
-                    </div>
-                </div>
+					<img
+						alt="Balatro"
+						src="/library_600x900.jpg"
+						draggable="false"
+					/>
+					<p>Balatro</p>
+				</div>
 			{/each}
 		</div>
 
 		<div class="strip">
 			{#each Array(width) as _}
 				<div class="tile">
-                    <img alt="Balatro" src="/library_600x900.jpg" draggable="false">
-                    <p>Balatro</p>
-                </div>
+					<img
+						alt="Balatro"
+						src="/library_600x900.jpg"
+						draggable="false"
+					/>
+					<p>Balatro</p>
+				</div>
 			{/each}
 		</div>
 	</div>
@@ -37,19 +41,18 @@
 		overflow: hidden;
         max-height: 70vh;
 	}
-
+    
 	.marquee-content {
 		display: flex;
-		width: max-content;
+		width: 100%;
 		animation-duration: calc(35s + (var(--length) * 5s));
 		animation-timing-function: linear;
 		animation-iteration-count: infinite;
-        width: 100%;
-        padding: 10px;
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-        justify-content: center;
+		padding: 10px;
+		flex-direction: row;
+		align-items: center;
+		justify-content: center;
+		will-change: transform;
     }
 
 	.left .marquee-content {

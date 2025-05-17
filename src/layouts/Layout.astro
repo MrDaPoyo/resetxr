@@ -9,6 +9,10 @@ import Logo from "../components/Logo.svelte";
 	<head>
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width" />
+		<meta name="description" content="Centro VR líder en Barcelona." />
+		<meta name="keywords" content="VR, AR, XR, Barcelona, ResetXR" />
+		<meta name="author" content="ResetXR" />
+		<meta name="theme-color" content="#000" />
 		<link rel="icon" type="image/svg+xml" href="/icon.webp" />
 		<meta name="generator" content={Astro.generator} />
 		<title>ResetXR - Centro VR líder en Barcelona.</title>
@@ -18,7 +22,7 @@ import Logo from "../components/Logo.svelte";
 	</body>
 </html>
 
-<style is:global>
+<style is:global lang="scss">
 	@font-face {
 		font-family: "Conthrax";
 		src: url("/conthrax.otf") format("opentype");
@@ -31,6 +35,7 @@ import Logo from "../components/Logo.svelte";
 		font-family: "Conthrax", sans-serif;
 		background-color: #000;
 		color: #fff;
+		scroll-behavior: smooth;
 	}
 
 	section {
@@ -49,6 +54,12 @@ import Logo from "../components/Logo.svelte";
 		padding: 0.5rem 1rem;
 		cursor: pointer;
 		color: whitesmoke;
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+    	:global(html) {
+      		scroll-behavior: auto;
+    	}
 	}
 </style>
 
