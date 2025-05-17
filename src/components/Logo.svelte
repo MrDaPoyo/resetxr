@@ -1,3 +1,14 @@
+<script>
+    import { onMount } from 'svelte';
+
+    onMount(() => {
+        const logo = document.querySelector('.logo');
+        setTimeout(() => {
+            logo.style.opacity = 0;
+        }, 2300);
+    });
+</script>
+
 <img src="/icon.webp" alt="Logo" class="logo" style="z-index: 100;" />
 
 <style>
