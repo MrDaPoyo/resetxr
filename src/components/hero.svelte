@@ -174,7 +174,7 @@
 	});
 </script>
 
-<div id="three-container" style="width: 100%; height: 100vh;">
+<div id="three-container" style="width: 100%; height: 100vh; margin: 0; padding: 0; overflow: hidden; position: relative;">
 	<div class="inverse-gradient"></div>
 </div>
 <div class="hero">
@@ -241,8 +241,8 @@
 		background: radial-gradient(
 			circle,
 			rgba(0, 0, 0, 0.5) 0%,
-			rgba(0, 0, 0, 0.5) 50%,
-			rgba(0, 0, 0, 1) 100%
+			rgba(0, 0, 0, 0.2) 50%,
+			rgba(0, 0, 0, 0) 100%
 		);
 		z-index: 10;
 	}
