@@ -175,11 +175,12 @@
 </script>
 
 <div id="three-container" style="width: 100%; height: 100vh;"></div>
-<div class="hero-text">
-	<h1>Reset·XR</h1>
-	<h3>Centro de realidad virtual líder en Barcelona</h3>
-	<a href="#games"><button>Explorar Juegos</button></a>
-
+<div class="hero">
+	<div class="hero-text">
+		<h1 style="font-size: 4rem; font-weight: bold; margin-bottom: 0;">Reset·XR</h1>
+		<h3 style="font-size: 2rem; margin-top: 0;">Centro de realidad virtual líder en Barcelona</h3>
+		<a href="#games"><button>Explorar Juegos</button></a>
+	</div>
 	<div
 		class="scroll-indicator"
 		style="position: fixed; bottom: 50px; left: 50%; transform: translateX(-50%); z-index: 9999;"
@@ -207,15 +208,25 @@
 </div>
 
 <style>
-	.hero-text {
+	.hero {
 		position: absolute;
 		top: 50%;
 		left: 50%;
 		height: 100%;
+		width: 100%;
 		transform: translate(-50%, -50%);
 		text-align: center;
 		color: white;
 		z-index: 10;
 		font-size: 2rem;
 	}
+	.hero-text {
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		transform: translate(-50%, -50%);
+		text-align: center;
+		z-index: 10;
+	}
+
 </style>
