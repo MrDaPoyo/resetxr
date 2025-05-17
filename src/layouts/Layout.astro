@@ -28,14 +28,27 @@ import Logo from "../components/Logo.svelte";
 		src: url("/conthrax.otf") format("opentype");
 	}
 
+	@font-face {
+		font-family: "Oxanium";
+		src: url("/oxanium.ttf") format("truetype");
+	}
+
 	html,
 	body {
 		margin: 0;
 		padding: 0;
-		font-family: "Conthrax", sans-serif;
+		font-family: "Oxanium", sans-serif;
 		background-color: #000;
 		color: #fff;
 		scroll-behavior: smooth;
+	}
+
+	h1, h2, h3, h4, h5, h6 {
+		font-family: "Conthrax", sans-serif;
+	}
+
+	button, a, p, small, span {
+		font-family: "Oxanium", sans-serif;
 	}
 
 	section {
