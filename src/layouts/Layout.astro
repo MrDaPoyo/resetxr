@@ -14,7 +14,6 @@ import Logo from "../components/Logo.svelte";
 		<title>ResetXR - Centro VR líder en Barcelona.</title>
 	</head>
 	<body>
-		<Logo transition:name="logo" transition:persist />
 		<slot />
 	</body>
 </html>
@@ -29,10 +28,16 @@ import Logo from "../components/Logo.svelte";
 	body {
 		margin: 0;
 		padding: 0;
-		overflow: hidden;
 		font-family: "Conthrax", sans-serif;
+		background-color: #000;
+		color: #fff;
+	}
+
+	section {
+		padding: 2vh;
+		overflow: hidden;
+		position: relative;
 	}
 </style>
 
-<Index client:only transition:persist />
 <ClientRouter />
