@@ -50,7 +50,8 @@
 		flex-direction: row;
 		align-items: center;
 		justify-content: center;
-		will-change: transform;
+		will-change: transform opacity filter;
+		animation-play-state: running;
     }
 
 	.left .marquee-content {
@@ -70,6 +71,10 @@
 		animation-name: scroll-down;
 		flex-direction: column;
     }
+
+	.marquee-content:hover {
+		animation-play-state: paused;
+	}
 
 	.strip {
 		display: flex;
@@ -94,22 +99,13 @@
         filter: grayscale(100%);
         border-radius: 25px;
         overflow: hidden;
+		will-change: transform opacity filter;
 	}
 
     .tile:hover {
         filter: grayscale(0%);
-    }
-
-    .tile p {
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        background-color: rgba(0, 0, 0, 0.5);
-        color: white;
-        padding: 10px;
-        text-align: center;
-        border-radius: 0 0 10px 10px;
+		transform: scale(1.05);
+		display: block;
     }
 
 	@keyframes scroll-left {
