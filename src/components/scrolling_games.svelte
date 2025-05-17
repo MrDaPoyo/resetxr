@@ -13,7 +13,6 @@
 						src="/library_600x900.jpg"
 						draggable="false"
 					/>
-					<p>Balatro</p>
 				</div>
 			{/each}
 		</div>
@@ -26,7 +25,6 @@
 						src="/library_600x900.jpg"
 						draggable="false"
 					/>
-					<p>Balatro</p>
 				</div>
 			{/each}
 		</div>
