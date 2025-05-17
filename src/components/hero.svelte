@@ -185,7 +185,7 @@
 	</div>
 	<div
 		class="scroll-indicator"
-		style="position: fixed; bottom: 50px; left: 50%; transform: translateX(-50%); z-index: 9999;"
+		style="position: fixed; bottom: 10vh; left: 50%; transform: translateX(-50%); z-index: 9999;"
 	>
 		<a
 			href="#games"
