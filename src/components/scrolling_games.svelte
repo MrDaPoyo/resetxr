@@ -48,7 +48,7 @@
         flex-direction: row;
         align-items: center;
         justify-content: center;
-	}
+    }
 
 	.left .marquee-content {
 		animation-name: scroll-left;
@@ -86,9 +86,16 @@
         display: flex;
         flex-grow: 1;
 		margin: 10px;
-		border-radius: 10px;
 		box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+	    transition: 0.1s ease-in-out;
+        filter: grayscale(100%);
+        border-radius: 25px;
+        overflow: hidden;
 	}
+
+    .tile:hover {
+        filter: grayscale(0%);
+    }
 
     .tile p {
         position: absolute;
