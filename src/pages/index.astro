@@ -1,7 +1,10 @@
 ---
 import Layout from "../layouts/Layout.astro";
-import Logo from "../components/Logo.svelte";
-import Links from "../components/Links.svelte";
+import Index from "../components/index.svelte";
 ---
 
-<Layout title="ResetXR"></Layout>
+<Layout title="ResetXR">
+	<astro-island>
+		<Index client:only />
+	</astro-island>
+</Layout>
