@@ -1,11 +1,14 @@
 ---
-	import Hero from "./hero.svelte";
-	import ScrollingIcons from "./scrolling_icons.svelte";
-	import ScrollingGames from "./scrolling_games.svelte";
+import Hero from "./hero.svelte";
+import ScrollingIcons from "./scrolling_icons.svelte";
+import ScrollingGames from "./scrolling_games.svelte";
 ---
 
 <section class="hero">
-	<Hero style="height: 100vh; width: 100vw; overflow-y: auto;" client:visible />
+	<Hero
+		style="height: 100vh; width: 100vw; overflow-y: auto;"
+		client:visible
+	/>
 	<div class="fade">
 		<style>
 			.fade {
@@ -26,10 +29,18 @@
 </section>
 <ScrollingIcons client:visible />
 <section class="game-carousel">
-	<a href="#games" id="games" aria-label="Scroll to games section" style="color: white;">
+	<a
+		href="#games"
+		id="games"
+		aria-label="Scroll to games section"
+		style="color: white;"
+	>
 		<h2>Nuestros Juegos</h2>
 	</a>
-	<p>Selecciona entre nuesta variedad de juegos, pasa el mouse por encima para revelar más informacion.</p>
+	<p>
+		Selecciona entre nuesta variedad de juegos, pasa el mouse por encima
+		para revelar más informacion.
+	</p>
 	<div class="game-container">
 		<ScrollingGames direction="up" styles="width: 100%;" client:visible />
 		<ScrollingGames direction="down" styles="width: 100%;" client:visible />
@@ -48,4 +59,3 @@
 		}
 	</style>
 </section>
-
