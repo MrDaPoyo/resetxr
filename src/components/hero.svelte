@@ -174,7 +174,22 @@
 	});
 </script>
 
-<div
-	id="three-container"
-	style="width: 100%; height: 100vh;"
-></div>
+<div id="three-container" style="width: 100%; height: 100vh;"></div>
+<div class="hero-text">
+	<h1>Reset·XR</h1>
+	<h3>Centro de realidad virtual líder en Barcelona</h3>
+	<a href="#games"><button>Explorar Juegos</button></a>
+</div>
+
+<style>
+	.hero-text {
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		transform: translate(-50%, -50%);
+		text-align: center;
+		color: white;
+		z-index: 10;
+		font-size: 2rem;
+	}
+</style>

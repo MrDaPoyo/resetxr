@@ -10,8 +10,10 @@
 		<div class="strip">
 			{#each Array(width) as _}
 				<div class="tile">
-                    <img alt="Balatro" src="/library_600x900.jpg">
-                    <p>Balatro</p>
+                    <div class="tile-front">
+                        <img alt="Balatro" src="/library_600x900.jpg" draggable="false">
+                        <p>Balatro</p>
+                    </div>
                 </div>
 			{/each}
 		</div>
@@ -19,7 +21,7 @@
 		<div class="strip">
 			{#each Array(width) as _}
 				<div class="tile">
-                    <img alt="Balatro" src="/library_600x900.jpg">
+                    <img alt="Balatro" src="/library_600x900.jpg" draggable="false">
                     <p>Balatro</p>
                 </div>
 			{/each}
@@ -39,7 +41,7 @@
 	.marquee-content {
 		display: flex;
 		width: max-content;
-		animation-duration: calc(40s + (var(--length) * 5s));
+		animation-duration: calc(35s + (var(--length) * 5s));
 		animation-timing-function: linear;
 		animation-iteration-count: infinite;
         width: 100%;
