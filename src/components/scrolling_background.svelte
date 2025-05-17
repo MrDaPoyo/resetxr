@@ -1,67 +1,71 @@
-<div class="marquee">
-  <div class="marquee-track">
-    <div class="marquee-inner">
-      <div class="tile"></div>
-      <div class="tile"></div>
-      <div class="tile"></div>
-      <div class="tile"></div>
-      <div class="tile"></div>
-      <div class="tile"></div>
-      <div class="tile"></div>
-      <div class="tile"></div>
-      <div class="tile"></div>
-      <div class="tile"></div>
-      <div class="tile"></div>
+<script>
+    let { left = false, width = 50, length = 3, styles = "" } = $props();
+</script>
+
+<div class="marquee {left ? 'left' : 'right'}" style="--length: {length}; {styles}" transition:persist>
+    <div class="marquee-content">
+        <div class="strip">
+            {#each Array(width) as _}
+                <div class="tile"></div>
+            {/each}
+        </div>
+        
+        <div class="strip">
+            {#each Array(width) as _}
+                <div class="tile"></div>
+            {/each}
+        </div>
     </div>
-    <div class="marquee-inner">
-      <div class="tile"></div>
-      <div class="tile"></div>
-      <div class="tile"></div>
-      <div class="tile"></div>
-      <div class="tile"></div>
-      <div class="tile"></div>
-      <div class="tile"></div>
-      <div class="tile"></div>
-      <div class="tile"></div>
-      <div class="tile"></div>
-      <div class="tile"></div>
-    </div>
-  </div>
 </div>
 
 <style>
-	.marquee {
-  overflow: hidden;
-  position: relative;
-  width: 100%;
-  height: 200px;
-}
+    .marquee {
+        position: relative;
+        width: 100%;
+        height: fit-content;
+        overflow: hidden;
+    }
 
-.marquee-track {
-  display: flex;
-  width: fit-content;
-  animation: scroll 10s linear infinite;
-}
+    .marquee-content {
+        display: flex;
+        width: max-content;
+        animation-duration: calc(20s + (var(--length) * 5s));
+        animation-timing-function: linear;
+        animation-iteration-count: infinite;
+    }
 
-.marquee-inner {
-  display: flex;
-}
+    .left .marquee-content {
+        animation-name: scroll-left;
+    }
 
-@keyframes scroll {
-  0% {
-    transform: translateX(0);
-  }
-  100% {
-    transform: translateX(-50%);
-  }
-}
+    .right .marquee-content {
+        animation-name: scroll-right;
+    }
 
-.tile {
-  width: 120px;
-  height: 180px;
-  margin-right: 20px;
-  background: url('https://placehold.co/120x180') center/cover no-repeat;
-  border-radius: 10px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.4);
-}
+    .strip {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+    }
+
+    .tile {
+        height: 40px;
+        width: 40px;
+        margin-right: 20px;
+        background: url('/icon.webp') no-repeat;
+        background-size: 150%;
+        background-position: center;
+        border-radius: 10px;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+    }
+
+    @keyframes scroll-left {
+        0% { transform: translateX(0); }
+        100% { transform: translateX(calc(-50% - 1px)); }
+    }
+
+    @keyframes scroll-right {
+        0% { transform: translateX(calc(-50% - 1px)); }
+        100% { transform: translateX(0); }
+    }
 </style>
