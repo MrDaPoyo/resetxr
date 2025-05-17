@@ -1,6 +1,7 @@
 <script>
 	import Hero from "./hero.svelte";
-	import ScrollingBackground from "./scrolling_background.svelte";
+	import ScrollingIcons from "./scrolling_icons.svelte";
+	import ScrollingGames from "./scrolling_games.svelte";
 </script>
 
 <section class="hero">
@@ -47,28 +48,27 @@
 		</a>
 	</div>
 </section>
+<ScrollingIcons />
 <section class="game-carousel">
-	<ScrollingBackground />
 	<a href="#games" id="games" aria-label="Scroll to games section" style="color: white;">
 		<h2>Nuestros Juegos</h2>
 	</a>
 	<p>Selecciona entre nuesta variedad de juegos, pasa el mouse por encima para revelar más informacion.</p>
+	<div class="game-container">
+		<ScrollingGames direction="up" styles="width: 100%;"/>
+		<ScrollingGames direction="down" styles="width: 100%;"/>
+		<ScrollingGames direction="up" styles="width: 100%;"/>
+		<ScrollingGames direction="down" styles="width: 100%;"/>
+	</div>
 	<style>
-		.game-carousel {
-			position: relative;
+		.game-container {
+			display: flex;
+			flex-direction: row;
+			align-items: center;
+			justify-content: center;
 			width: 100%;
+			height: 100%;
 			overflow: hidden;
-			background-color: #000;
-		}
-		.game-carousel h2 {
-			color: white;
-			text-align: center;
-			margin-top: 20px;
-		}
-		.game-carousel p {
-			color: white;
-			text-align: center;
-			margin-bottom: 20px;
 		}
 	</style>
 </section>
